@@ -1,0 +1,49 @@
+# CourseVault mobile — build the Android APK on GitHub Actions.
+#
+# Why this exists: the APK cannot be built in the Muse sandbox — Gradle's
+# daemon talks to itself over Java localhost TCP and those connections are
+# reset there regardless of the network-permission setting. GitHub's runners
+# have no such restriction, so the build runs here instead.
+#
+# Trigger it from the repo's Actions tab ("Run workflow"). The APK is
+# uploaded as an artifact named "coursevault-apk" (download it from the
+# finished run). No secrets are needed: without android/key.properties the
+# release build falls back to the debug signing config (see
+# android/app/build.gradle.kts), so the APK installs fine for trying it out.
+# For a Play Store release signed with the real key, add the keystore as a
+# base64 GitHub secret later — see README.md.
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK (release)
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: coursevault-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
