@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CourseVault launcher icon (vector, so it can live in git).
+     Dark rounded square with a white "CV" monogram. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#111827"
+        android:pathData="M8,8h92v92H8z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,38 L38,38 L38,66 L30,66 Z M42,38 L50,38 L50,66 L42,66 Z" />
+    <path
+        android:fillColor="#6366F1"
+        android:pathData="M56,38h16v8h-8v20h-8z" />
+</vector>

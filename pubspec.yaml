@@ -1,0 +1,28 @@
+name: course_vault
+description: "CourseVault — a local-first course library for Android and iPhone. Paste a Mega folder link and it builds your catalogue, tracks progress, and resumes where you left off. No accounts, no cloud, no AI."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  pointycastle: ^4.0.0
+  crypto: ^3.0.6
+  http: ^1.2.2
+  video_player: ^2.9.5
+  shared_preferences: ^2.3.3
+  path_provider: ^2.1.5
+  flutter_markdown: ^0.7.4
+  open_file: ^3.5.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
