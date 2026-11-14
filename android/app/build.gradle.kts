@@ -7,6 +7,7 @@ plugins {
 
 import java.util.Properties
 import java.io.FileInputStream
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // Release signing from android/key.properties (local only, gitignored).
 val keystoreProperties = Properties()
@@ -25,8 +26,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+    // kotlinOptions.jvmTarget is a hard error with Kotlin 2.4 — use the
+    // compilerOptions DSL instead (see https://kotl.in/u1r8ln).
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 
     defaultConfig {
