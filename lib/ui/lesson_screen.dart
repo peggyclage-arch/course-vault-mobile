@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:open_file/open_file.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -36,6 +37,7 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen> {
   static const _speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+  static const _speedKey = 'playback_speed';
 
   VideoPlayerController? _controller;
   Future<void>? _initFuture;
@@ -101,6 +103,13 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   Future<void> _initVideo() async {
+    // Remember the speed from the last video: a speed set on one lesson
+    // (e.g. 1.25x) stays set for the next videos, even after restarting.
+    final prefs = await SharedPreferences.getInstance();
+    final savedSpeed = prefs.getDouble(_speedKey);
+    if (savedSpeed != null && _speeds.contains(savedSpeed)) {
+      _speed = savedSpeed;
+    }
     final proxy = widget.library.proxy;
     final url = proxy.urlFor(_lesson.video!);
     final controller = VideoPlayerController.networkUrl(
@@ -120,6 +129,8 @@ class _LessonScreenState extends State<LessonScreen> {
       controller.addListener(_onTick);
       _saveTimer =
           Timer.periodic(const Duration(seconds: 5), (_) => _savePosition());
+      // Apply the remembered speed (default 1.0x on first use).
+      await controller.setPlaybackSpeed(_speed);
       setState(() {});
       await controller.play();
       _setWakelock(true);
@@ -205,6 +216,10 @@ class _LessonScreenState extends State<LessonScreen> {
     final next = _speeds[(i + 1) % _speeds.length];
     setState(() => _speed = next);
     c.setPlaybackSpeed(next);
+    // Remember it so the next video (and the next launch) keeps it.
+    SharedPreferences.getInstance().then(
+      (prefs) => prefs.setDouble(_speedKey, next),
+    );
   }
 
   Future<void> _toggleFullscreen() async {
