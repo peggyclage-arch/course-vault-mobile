@@ -34,6 +34,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Pinned: Flutter 3.50.0 (stable, Nov 2025) broke the build —
+          # its Gradle plugin calls ApplicationExtension.getDefaultConfig(),
+          # which AGP 8.11.1 does not provide (run #11). 3.47.9 built
+          # v1.0.0 fine (run #5, 10 Nov). Do not float this to stable
+          # again without checking the AGP minimum first.
+          flutter-version: "3.47.9"
 
       - name: Install dependencies
         run: flutter pub get
